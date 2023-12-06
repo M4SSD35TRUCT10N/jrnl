@@ -15,9 +15,13 @@ const CFG_FILE_NAME: &str = "jrnl.config";
 const MAN_CLI_CALL: &str = "jrnl man";
 
 fn create_jrnl_entry(args: &Vec<String>) {
+    // TODO Write only if config file is not provided and no default
+    //      jrnl.config could be found.
+    write_cfg_file(&args);
     // TODO #[allow(unused_variables)] wieder entfernen, wenn implementiert
     #[allow(unused_variables)]
     let cfg = read_cfg_file(&args);
+
     // TODO Iteriere über die Argumente, da eine andere Konfigurationsdatei
     //      angegeben werden kann (die Reihenfolge der Argumente kann sich
     //      ändern).
