@@ -11,12 +11,12 @@ use std::fs::File;
 use std::io::prelude::*;
 
 const APP_NAME: &str = "jrnl";
-const CFG_FILE_NAME: &str = "jrnl.config";
+const CFG_FILE_NAME: &str = "jrnl.cfg";
 const MAN_CLI_CALL: &str = "jrnl man";
 
 fn create_jrnl_entry(args: &Vec<String>) {
     // TODO Write only if config file is not provided and no default
-    //      jrnl.config could be found.
+    //      jrnl.cfg could be found.
     write_cfg_file(&args);
     // TODO #[allow(unused_variables)] wieder entfernen, wenn implementiert
     #[allow(unused_variables)]
@@ -44,9 +44,9 @@ fn print_man() {
     println!("file with a default header. Your can change this with a template of your own.\n");
     println!("Arguments:");
     println!("  jrnl allows you to write a journal entry with different arguments ahead.\n");
-    println!("  *   cfg path-to-config\\your-name.config");
-    println!("      Loads your config file. If omitted jrnl defaults to default.config in the");
-    println!("      directory where jrnl executable lies. If default.config does not exist,");
+    println!("  *   cfg path-to-config\\your-name.cfg");
+    println!("      Loads your config file. If omitted jrnl defaults to jrnl.cfg in the");
+    println!("      directory where jrnl executable lies. If jrnl.cfg does not exist,");
     println!("      it will be created for you at the first start with standard values.\n");
     println!("  *   yesterday");
     println!("      Will use the date and time of the day before for the creation of the");
