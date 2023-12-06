@@ -54,10 +54,78 @@ fn init_jrnl(args: &Vec<String>) {
 }
 
 fn print_man() {
-    // TODO Schreibe ein kleines Handbuch zur Anwendung.
     println!("Manual for '{}'", APP_NAME);
     println!("-------------------------------------------------------------------------------");
-    println!("TODO @EL: Write the manual!");
+    println!("Usage is as follows:");
+    println!("jrnl today \"It was a productive day without any interruptions.\"\n");
+    println!("As you can see in its simplest form jrnl will generate a commonmark markdown");
+    println!("file with a default header. Your can change this with a template of your own.\n");
+    println!("Arguments:");
+    println!("  jrnl allows you to write a journal entry with different arguments ahead.\n");
+    println!("  *   cfg path-to-config\\your-name.config");
+    println!("      Loads your config file. If omitted jrnl defaults to default.config in the");
+    println!("      directory where jrnl executable lies. If default.config does not exist,");
+    println!("      it will be created for you at the first start with standard values.\n");
+    println!("  *   yesterday");
+    println!("      Will use the date and time of the day before for the creation of the");
+    println!("      journal entry.\n");
+    println!("  *   today");
+    println!("      Will use the current date and time for the creation of the journal entry.");
+    println!("      The argument 'today' can be omitted. jrnl will assume you write your entry");
+    println!("      for today.\n");
+    println!("  *   tomorrow");
+    println!("      Will use the date and time of the day after for the creation of the");
+    println!("      journal entry.\n");
+    println!("  *   specific journal name");
+    println!("      Will write to the corresponding journal. jrnl today\n");
+    println!("  *   add");
+    println!("      Using 'add' will alow you to add to an already written entry.");
+    println!("      For example jrnl add ~/folderjournal/2021/05/05.md or");
+    println!("      jrnl add ~/folderjournal/2021-05-05.md will let you add some text to your");
+    println!("      entry and updating the time of change in the header of the opened file.");
+    println!("      With jrnl add today (today can be omitted) you could add to the current");
+    println!("      entry. jrnl add tomorrow and jrnl add yesterday will work also.");
+    println!("      If you omit the file the current entry will be modified and the provided");
+    println!("      String will be added as a new line. e.g. ~/folderjournal/2021/05/05.md");
+    println!("      when you add something and today would be the 5th May of 2023.\n");
+    println!("Configuration:");
+    println!("  The configuration file is a simple key-value store. You can comment with a '#'");
+    println!("  as first character per line. Currently there is not much to set.");
+    println!("  *   journals");
+    println!("      Here you define the journals (path-to-and-name-of-the-journal) in a comma");
+    println!("      ',' separated list. E.g. journals=default,/home/pale-rider/jrnl/work,");
+    println!("      /home/pale-rider/jrnl/private.");
+    println!("      The last entry of the above given path is the journal name which can be");
+    println!("      an cli argument as mentioned above. Default writes to the directory the");
+    println!("      jrnl executable lies in. The default is 'default'. You should change this.\n");
+    println!("  *   mode");
+    println!("      Can be either mode=folders or mode=files. The default is mode=files.");
+    println!("      Mode 'folders' will generate a journal entry like this:");
+    println!("                                  ~/folderjournal/2021/05/05.md.");
+    println!("      Mode 'files' will generate a journal entry like this:");
+    println!("                                  ~/folderjournal/2021-05-05.md.\n");
+    println!("  *   encryption");
+    println!("      This enables encryption with encryption=enabled for your notes.");
+    println!("      The default is encryption=disabled.");
+    println!("      Maybe you should change this, if you plan to store them on someone else'");
+    println!("      computer.\n");
+    println!("  *   editor");
+    println!("      This gives you the possibility to use an external editor of your choice for");
+    println!("      finishing your journal entry. For example editor=nvim will start NeoVIM");
+    println!("      with the freshly generated file. The default is editor=none.\n");
+    println!("  *   template");
+    println!("      You have the option to set up a template commonmark markdown file for your");
+    println!("      journal entries with e.g. template=/home/pale-rider/jrnl/my-jrnl-entry.md.");
+    println!("      By default it is set to template=none.\n");
+    println!("  *   stardate");
+    println!("      When enabled with stardate=enabled it will generate a stardate to display");
+    println!("      in the header of the journal entry. Default is stardate=disabled.\n");
+    println!("  *   editing_mark");
+    println!("      With editing_mark=enabled every editing through jrnl add is traceable");
+    println!("      because it will add the timestamp above the added lines.");
+    println!("      Default is editing_mark=disabled.\n");
+    println!("\nThe training you should finish first.");
+    println!("Shortcuts the path to the dark side they are.\n");
 }
 
 fn read_cfg_file(args: &Vec<String>) -> Vec<String> {
