@@ -262,6 +262,7 @@ fn main() {
         println!("Type '{}' for manual.", MAN_CLI_CALL);
     } else {
         match args[1].trim() {
+            // "set" => write_cfg_file(&args),
             "man" => print_man(),
             &_ => create_jrnl_entry(&args),
         }
