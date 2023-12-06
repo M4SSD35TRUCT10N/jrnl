@@ -31,30 +31,6 @@ fn create_jrnl_entry(args: &Vec<String>) {
     }
 }
 
-fn init_jrnl(args: &Vec<String>) {
-    println!(
-        "TODO @EL: Write a default json file config '{}' in '{}' directory.",
-        if args.len() <= 3 {
-            CFG_FILE_NAME
-        } else {
-            // TODO Ermittle den korrekten Namen der Konfigurationsdatei.
-            args[3].trim()
-        },
-        if args.len() < 2 {
-            APP_NAME
-        } else {
-            if args.len() > 3 {
-                // TODO Ermittle den korrekten Pfad.
-                args[3].trim()
-            } else {
-                panic!("Missing argument! Type '{}' for manual.", MAN_CLI_CALL)
-            }
-        }
-    );
-
-    write_cfg_file(&args);
-}
-
 fn print_man() {
     println!("Manual for '{}'", APP_NAME);
     println!("-------------------------------------------------------------------------------");
@@ -286,28 +262,8 @@ fn main() {
         println!("Type '{}' for manual.", MAN_CLI_CALL);
     } else {
         match args[1].trim() {
-            "cfg" => create_jrnl_entry(&args),
-            "init" => init_jrnl(&args),
             "man" => print_man(),
-            "today" => {
-                println!(
-                    "TODO @EL: How to get the current time and convert it (attention to '{}').",
-                    CFG_FILE_NAME
-                );
-                create_jrnl_entry(&args);
-            }
-            "tomorrow" => {
-                println!("TODO @EL: How to get the current time plus one day and convert it (attention to '{}').", CFG_FILE_NAME);
-                create_jrnl_entry(&args);
-            }
-            "yesterday" => {
-                println!("TODO @EL: How to get the current time minus one day and convert it (attention to '{}').", CFG_FILE_NAME);
-                create_jrnl_entry(&args);
-            }
-            &_ => panic!("Unknown argument! Type '{}' for manual.", MAN_CLI_CALL),
+            &_ => create_jrnl_entry(&args),
         }
     }
-
-    println!("\nThe training you should finish first.");
-    println!("Shortcuts the path to the dark side they are.\n");
 }
