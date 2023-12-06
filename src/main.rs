@@ -11,7 +11,7 @@ use std::fs::File;
 use std::io::prelude::*;
 
 const APP_NAME: &str = "jrnl";
-const CFG_FILE_NAME: &str = "jrnl.json";
+const CFG_FILE_NAME: &str = "jrnl.config";
 const MAN_CLI_CALL: &str = "jrnl man";
 
 fn create_jrnl_entry(args: &Vec<String>) {
@@ -24,7 +24,7 @@ fn create_jrnl_entry(args: &Vec<String>) {
     if args.len() > 2 {
         if args[2].contains("@") {
             println!(
-                "TODO @EL: Adding tags {:?} to json file using standard '{}'.",
+                "TODO @EL: Adding tags {:?} to config file using standard '{}'.",
                 args[2], CFG_FILE_NAME
             );
         }
@@ -132,7 +132,7 @@ fn print_man() {
 
 fn read_cfg_file(args: &Vec<String>) -> Vec<String> {
     println!(
-        "TODO @EL: Using config file '{}'.",
+        "TODO @EL: Using config file {}.",
         if args.len() > 2 {
             args[2].trim()
         } else {
@@ -140,7 +140,7 @@ fn read_cfg_file(args: &Vec<String>) -> Vec<String> {
         }
     );
 
-    // TODO Auslesen der JSON-Datei.
+    // TODO Auslesen der config-Datei.
     return vec!["".to_string(), "".to_string()];
 }
 
