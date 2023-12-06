@@ -7,6 +7,8 @@
 //      depending on your system locale or the one specified in the
 //      config file
 use std::env;
+use std::fs::File;
+use std::io::prelude::*;
 
 const APP_NAME: &str = "jrnl";
 const CFG_FILE_NAME: &str = "jrnl.json";
@@ -142,15 +144,139 @@ fn read_cfg_file(args: &Vec<String>) -> Vec<String> {
     return vec!["".to_string(), "".to_string()];
 }
 
-fn write_cfg_file(args: &Vec<String>) {
-    println!(
-        "TODO @EL: Writing config file '{}'.",
-        if args.len() > 3 {
-            args[3].trim()
-        } else {
-            CFG_FILE_NAME
-        }
-    );
+// TODO @EL remove the underscore from args when cli cfg change functionality
+// is implemented.
+fn write_cfg_file(_args: &Vec<String>) {
+    // TODO @EL add mut when cli cfg change functionality is implemented.
+    let /*mut*/ cfg_file_name = CFG_FILE_NAME;
+
+    // TODO @EL check the args whether there is cfg keyword.
+
+    let f = File::create(&cfg_file_name).expect("Could not create file.");
+
+    if cfg_file_name.trim().eq(CFG_FILE_NAME.trim()) {
+        println!("Writing default config file {}...", CFG_FILE_NAME);
+
+        writeln!(&f, "# jrnl config file\n").expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# Here you define the journals (path-to-and-name-of-the-journal) in a comma ','"
+        )
+        .expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# separated list. E.g. journals=default,/home/pale-rider/jrnl/work,"
+        )
+        .expect("Could not write to file.");
+        writeln!(&f, "# /home/pale-rider/jrnl/private.").expect("Could not write to file.");
+        writeln!(&f, "#").expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# The last entry of the above given path is the journal name which can be"
+        )
+        .expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# an cli argument as mentioned above. Default writes to the directory the"
+        )
+        .expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# jrnl executable lies in. The default is 'default'. You should change this."
+        )
+        .expect("Could not write to file.");
+        writeln!(&f, "journal=default\n").expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# Can be either mode=folders or mode=files. The default is mode=files."
+        )
+        .expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# Mode 'folders' will generate a journal entry like this:"
+        )
+        .expect("Could not write to file.");
+        writeln!(
+            &f,
+            "#                                               ~/folderjournal/2021/05/05.md."
+        )
+        .expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# Mode 'files' will generate a journal entry like this:"
+        )
+        .expect("Could not write to file.");
+        writeln!(
+            &f,
+            "#                                               ~/folderjournal/2021-05-05.md."
+        )
+        .expect("Could not write to file.");
+        writeln!(&f, "mode=files\n").expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# This enables encryption with encryption=enabled for your notes."
+        )
+        .expect("Could not write to file.");
+        writeln!(&f, "# The default is encryption=disabled.").expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# Maybe you should change this, if you plan to store them on someone else'"
+        )
+        .expect("Could not write to file.");
+        writeln!(&f, "# computer.").expect("Could not write to file.");
+        writeln!(&f, "encryption=disabled\n").expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# This gives you the possibility to use an external editor of your choice for"
+        )
+        .expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# finishing your journal entry. For example editor=nvim will start NeoVIM"
+        )
+        .expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# with the freshly generated file. The default is editor=none."
+        )
+        .expect("Could not write to file.");
+        writeln!(&f, "editor=none\n").expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# You have the option to set up a template commonmark markdown file for your"
+        )
+        .expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# journal entries with e.g. template=/home/pale-rider/jrnl/my-jrnl-entry.md."
+        )
+        .expect("Could not write to file.");
+        writeln!(&f, "# By default it is set to template=none.").expect("Could not write to file.");
+        writeln!(&f, "template=none\n").expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# When enabled with stardate=enabled it will generate a stardate to display"
+        )
+        .expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# in the header of the journal entry. Default is stardate=disabled."
+        )
+        .expect("Could not write to file.");
+        writeln!(&f, "stardate=disabled\n").expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# With editing_mark=enabled every editing through jrnl add is traceable"
+        )
+        .expect("Could not write to file.");
+        writeln!(
+            &f,
+            "# because it will add the timestamp above the added lines."
+        )
+        .expect("Could not write to file.");
+        writeln!(&f, "# Default is editing_mark=disabled.").expect("Could not write to file.");
+        writeln!(&f, "editing_mark=disabled").expect("Could not write to file.");
+    }
 }
 
 fn main() {
