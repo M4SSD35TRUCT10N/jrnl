@@ -1,11 +1,3 @@
-// TODO - jnrl.sh kinda clone in Rust
-//  *   reading from command line (DONE)
-//  *   create txt files like 2020-05-17-<first sentence>.log
-//  *   use semantics for timestamps like yesterday, today or tomorrow
-//  *   first line is: <timestamp>: <first sentence> followed by the
-//      body - <timestamp> is like 17.05.2020 or 05/17/2020
-//      depending on your system locale or the one specified in the
-//      config file
 use std::env;
 use std::fs;
 use std::fs::File;
@@ -20,18 +12,6 @@ fn create_jrnl_entry(args: &Vec<String>) {
         println!("Config not empty.");
     } else {
         eprintln!("Config not found.");
-    }
-
-    // TODO Iteriere über die Argumente, da eine andere Konfigurationsdatei
-    //      angegeben werden kann (die Reihenfolge der Argumente kann sich
-    //      ändern).
-    if args.len() > 2 {
-        if args[2].contains("@") {
-            println!(
-                "TODO @EL: Adding tags {:?} to config file using standard '{}'.",
-                args[2], CFG_FILE_NAME
-            );
-        }
     }
 }
 
