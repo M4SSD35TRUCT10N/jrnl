@@ -283,8 +283,7 @@ fn main() {
         print_man();
     } else {
         match args[1].trim() {
-            "set" => write_cfg_file(&args),
-            "init" => write_cfg_file(&args),
+            "set" | "init" => write_cfg_file(&args),
             &_ => create_jrnl_entry(&args),
         }
     }
