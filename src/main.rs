@@ -6,10 +6,36 @@ use std::io::prelude::*;
 const CFG_FILE_NAME: &str = "jrnl.cfg";
 
 fn create_jrnl_entry(args: &Vec<String>) {
-    let cfg = read_cfg_file(&args);
+    let mut cfg_file_name = format!("./{}", CFG_FILE_NAME);
+    let mut own_cfg_file: bool = false;
 
-    if cfg.len() != 0 {
-        println!("Config not empty.");
+    for a in args {
+        if own_cfg_file {
+            cfg_file_name = a.trim().to_string();
+            own_cfg_file = false;
+        }
+        if a.trim().eq("cfg".trim()) {
+            own_cfg_file = true;
+        }
+    }
+
+    let cfg_content: String =
+        fs::read_to_string(cfg_file_name).expect("Could not read file content");
+
+    let cfg_options: Vec<&str> = cfg_content.split("\n").collect();
+
+    if cfg_options.len() != 0 {
+        let mut cfg_options_no_comments: Vec<&str> = Vec::new();
+
+        for co in &cfg_options {
+            if !co.trim().starts_with("#") && co.len() != 0 {
+                cfg_options_no_comments.push(co);
+            }
+        }
+
+        for co in &cfg_options_no_comments {
+            println!("{}", co);
+        }
     } else {
         eprintln!("Config not found.");
     }
@@ -127,20 +153,6 @@ The training you should finish first.
 Shortcuts the path to the dark side they are.";
 
     println!("{}", man_content);
-}
-
-fn read_cfg_file(args: &Vec<String>) -> Vec<String> {
-    println!(
-        "TODO @EL: Using config file {}.",
-        if args.len() > 2 {
-            args[2].trim()
-        } else {
-            CFG_FILE_NAME
-        }
-    );
-
-    // TODO Auslesen der config-Datei.
-    return Vec::new();
 }
 
 fn write_cfg_file(args: &Vec<String>) {
