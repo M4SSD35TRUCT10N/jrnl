@@ -18,13 +18,11 @@ v0.1.2
 -   Simplified print_man() and initial write_cfg_file(args: &Vec<String>)
     function.
 
-
 v0.1.1
 -------------------------------------------------------------------------------
 -   Implemented print_man() function to print a manual to stdout (cli).
 -   Implemented initial write_cfg_file(args: &Vec<String>) function to write a
     default config file.
-
 
 v0.1.0 - initial commit
 -------------------------------------------------------------------------------
