@@ -1,0 +1,31 @@
+v0.3.0
+-------------------------------------------------------------------------------
+-   Finished config file loading bit in create_jrnl_entry(args: &Vec<String>).
+    Made various cleanups in source code.
+
+v0.2.0
+-------------------------------------------------------------------------------
+-   Finished write_cfg_file(args: &Vec<String>) function with init and set mode
+    implemented.
+
+v0.1.3
+-------------------------------------------------------------------------------
+-   Simplified first argument tree. Only set and init are different from all
+    other possible arguments.
+
+v0.1.2
+-------------------------------------------------------------------------------
+-   Simplified print_man() and initial write_cfg_file(args: &Vec<String>)
+    function.
+
+
+v0.1.1
+-------------------------------------------------------------------------------
+-   Implemented print_man() function to print a manual to stdout (cli).
+-   Implemented initial write_cfg_file(args: &Vec<String>) function to write a
+    default config file.
+
+
+v0.1.0 - initial commit
+-------------------------------------------------------------------------------
+-   Created basic layout of program.
