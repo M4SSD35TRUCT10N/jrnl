@@ -1,3 +1,4 @@
+use chrono::prelude::*;
 use std::env;
 use std::fs;
 use std::fs::File;
@@ -26,14 +27,16 @@ fn create_jrnl_entry(args: &Vec<String>) {
     let mut arg_tomorrow: bool = false;
     let mut arg_yesterday: bool = false;
 
+    let mut jrnl_time = Local::now();
+
     for a in args {
         if arg_cfg {
-             cfg_file_name = a.trim().to_string();
-             arg_cfg = false;
-         }
-         if a.trim().eq("cfg".trim()) {
-             arg_cfg = true;
-         }
+            cfg_file_name = a.trim().to_string();
+            arg_cfg = false;
+        }
+        if a.trim().eq("cfg".trim()) {
+            arg_cfg = true;
+        }
     }
 
     let cfg_content: String =
@@ -56,7 +59,6 @@ fn create_jrnl_entry(args: &Vec<String>) {
                 || cfg_arg[0].to_string().eq("editing_mark")
                 || cfg_arg[0].to_string().eq("encryption")
                 || cfg_arg[0].to_string().eq("journals")
-                || cfg_arg[0].to_string().eq("mode")
                 || cfg_arg[0].to_string().eq("stardate")
                 || cfg_arg[0].to_string().eq("template")
             {
@@ -89,11 +91,7 @@ fn create_jrnl_entry(args: &Vec<String>) {
     }
 
     for a in args {
-        if a.trim().eq("add".trim())
-            || a.trim().eq("today".trim())
-            || a.trim().eq("tomorrow".trim())
-            || a.trim().eq("yesterday".trim())
-        {
+        if a.trim().eq("add".trim()) {
             eprintln!("{} {}", a.trim(), FEATURE_NOT_IMPLEMENTED);
         }
         if !arg_add && !arg_yesterday && !arg_today && !arg_tomorrow && arg_journal.eq("") {
@@ -134,12 +132,35 @@ fn create_jrnl_entry(args: &Vec<String>) {
     if cfg_editing_mark {}
     if cfg_encryption {}
     if cfg_journals.eq("") {}
-    let mut journal_file_name: &str = "";
+    if arg_tomorrow {
+        jrnl_time = jrnl_time.checked_add_days(chrono::Days::new(1)).unwrap();
+    }
+    let mut journal_file_name: String = ".md".to_string();
+    if arg_yesterday {
+        jrnl_time = jrnl_time.checked_sub_days(chrono::Days::new(1)).unwrap();
+    }
+
     if cfg_mode.eq("files") {
-        journal_file_name = "./files.md";
+        journal_file_name = format!(
+            "{}{}",
+            jrnl_time.date_naive().to_string(),
+            journal_file_name
+        );
     }
     if cfg_mode.eq("folders") {
-        journal_file_name = "./folders.md";
+        fs::create_dir_all(format!(
+            "./{}/{}",
+            jrnl_time.year().to_string(),
+            jrnl_time.month().to_string()
+        ))
+        .expect("Couldn't create folders.");
+        journal_file_name = format!(
+            "./{}/{}/{}{}",
+            jrnl_time.year().to_string(),
+            jrnl_time.month().to_string(),
+            jrnl_time.day().to_string(),
+            journal_file_name
+        );
     }
     if cfg_stardate {}
     if cfg_template.eq("") {}
