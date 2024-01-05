@@ -3,6 +3,7 @@ use std::env;
 use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
+use std::process::Command;
 
 const CFG_FILE_NAME: &str = "jrnl.cfg";
 const FEATURE_NOT_IMPLEMENTED: &str = "This feature is not implemented yet.";
@@ -23,6 +24,7 @@ fn create_jrnl_entry(args: &Vec<String>) {
     let mut arg_cfg: bool = false;
     let mut arg_journal: String = "".to_string();
     let mut arg_journal_entry: &str = "";
+    let mut arg_tags: String = "".to_string();
     let mut arg_today: bool = false;
     let mut arg_tomorrow: bool = false;
     let mut arg_yesterday: bool = false;
@@ -55,8 +57,7 @@ fn create_jrnl_entry(args: &Vec<String>) {
 
         for co in &cfg_options_no_comments {
             let cfg_arg: Vec<&str> = co.split("=").collect();
-            if cfg_arg[0].to_string().eq("editor")
-                || cfg_arg[0].to_string().eq("editing_mark")
+            if cfg_arg[0].to_string().eq("editing_mark")
                 || cfg_arg[0].to_string().eq("encryption")
                 || cfg_arg[0].to_string().eq("journals")
                 || cfg_arg[0].to_string().eq("stardate")
@@ -109,6 +110,9 @@ fn create_jrnl_entry(args: &Vec<String>) {
             arg_today = a.trim().eq("today".trim());
             arg_tomorrow = a.trim().eq("tomorrow".trim());
         }
+        if arg_tags.eq("") && a.trim().starts_with("@") {
+            arg_tags = a.trim().replace("@", "").to_string();
+        }
         // take care of ommitable arguments
         if !arg_yesterday && !arg_today && !arg_tomorrow && arg_add {
             arg_today = true;
@@ -117,6 +121,7 @@ fn create_jrnl_entry(args: &Vec<String>) {
         if a.trim().eq(&args[&args.len() - 1].to_string())
             && a.trim().ne("add".trim())
             && a.trim().ne("cfg".trim())
+            && !a.trim().starts_with("@")
             && a.trim().ne("today".trim())
             && a.trim().ne("tomorrow".trim())
             && a.trim().ne("yesterday".trim())
@@ -128,7 +133,6 @@ fn create_jrnl_entry(args: &Vec<String>) {
         }
     }
 
-    if cfg_editor.eq("") {}
     if cfg_editing_mark {}
     if cfg_encryption {}
     if cfg_journals.eq("") {}
@@ -165,7 +169,28 @@ fn create_jrnl_entry(args: &Vec<String>) {
     if cfg_stardate {}
     if cfg_template.eq("") {}
 
-    fs::write(journal_file_name, arg_journal_entry).expect("Could not write file.");
+    let default_header: String = format!(
+        "---\ntags: [{}]\ntitle: '{}'\ncreated: '{}'\nmodified: '{}'\n---\n\n# {}\n",
+        if arg_tags.ne("") {arg_tags.as_str()}else {"Daily Report"},
+        jrnl_time.date_naive(),
+        jrnl_time,
+        jrnl_time,
+        jrnl_time.date_naive()
+    );
+
+    fs::write(
+        &journal_file_name,
+        format!("{}\n{}", default_header, arg_journal_entry),
+    )
+    .expect("Could not write file.");
+
+    if cfg_editor.ne("") {
+        let mut run_editor = Command::new(&cfg_editor);
+        run_editor.arg(&journal_file_name);
+        run_editor
+            .spawn()
+            .expect(format!("{} not found", &cfg_editor).as_str());
+    }
 }
 
 fn print_man() {
