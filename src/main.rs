@@ -9,24 +9,31 @@ const CONFIG_ENTRY_NOT_IMPLEMENTED: &str = "This configuration entry is not impl
 
 fn create_jrnl_entry(args: &Vec<String>) {
     let mut cfg_file_name = format!("./{}", CFG_FILE_NAME);
-    let mut own_cfg_file: bool = false;
 
-    // sort out what comes in from command line
+    let mut cfg_editor: String = "".to_string();
+    let mut cfg_editing_mark: bool = false;
+    let mut cfg_encryption: bool = false;
+    let mut cfg_journals: String = "default".to_string();
+    let mut cfg_mode: String = "files".to_string();
+    let mut cfg_stardate: bool = false;
+    let mut cfg_template: String = "".to_string();
+
+    let mut arg_add: bool = false;
+    let mut arg_cfg: bool = false;
+    let mut arg_journal: String = "".to_string();
+    let mut arg_journal_entry: &str = "";
+    let mut arg_today: bool = false;
+    let mut arg_tomorrow: bool = false;
+    let mut arg_yesterday: bool = false;
+
     for a in args {
-        if own_cfg_file {
-            cfg_file_name = a.trim().to_string();
-            own_cfg_file = false;
-        }
-        if a.trim().eq("cfg".trim()) {
-            own_cfg_file = true;
-        }
-        if a.trim().eq("add".trim())
-            || a.trim().eq("today".trim())
-            || a.trim().eq("tomorrow".trim())
-            || a.trim().eq("yesterday".trim())
-        {
-            eprintln!("{} {}", a.trim(), FEATURE_NOT_IMPLEMENTED);
-        }
+        if arg_cfg {
+             cfg_file_name = a.trim().to_string();
+             arg_cfg = false;
+         }
+         if a.trim().eq("cfg".trim()) {
+             arg_cfg = true;
+         }
     }
 
     let cfg_content: String =
@@ -45,20 +52,99 @@ fn create_jrnl_entry(args: &Vec<String>) {
 
         for co in &cfg_options_no_comments {
             let cfg_arg: Vec<&str> = co.split("=").collect();
-            if cfg_arg[0].to_string().eq("journals")
-                || cfg_arg[0].to_string().eq("mode")
-                || cfg_arg[0].to_string().eq("encryption")
-                || cfg_arg[0].to_string().eq("editor")
-                || cfg_arg[0].to_string().eq("template")
-                || cfg_arg[0].to_string().eq("stardate")
+            if cfg_arg[0].to_string().eq("editor")
                 || cfg_arg[0].to_string().eq("editing_mark")
+                || cfg_arg[0].to_string().eq("encryption")
+                || cfg_arg[0].to_string().eq("journals")
+                || cfg_arg[0].to_string().eq("mode")
+                || cfg_arg[0].to_string().eq("stardate")
+                || cfg_arg[0].to_string().eq("template")
             {
                 eprintln!("{} {}", cfg_arg[0], CONFIG_ENTRY_NOT_IMPLEMENTED);
+            }
+            if cfg_arg[0].to_string().eq("editor") {
+                cfg_editor = cfg_arg[1].to_string();
+            }
+            if cfg_arg[0].to_string().eq("editing_mark") {
+                cfg_editing_mark = cfg_arg[1].to_string().eq("enabled");
+            }
+            if cfg_arg[0].to_string().eq("encryption") {
+                cfg_encryption = cfg_arg[1].to_string().eq("enabled");
+            }
+            if cfg_arg[0].to_string().eq("journals") {
+                cfg_journals = cfg_arg[1].to_string();
+            }
+            if cfg_arg[0].to_string().eq("mode") {
+                cfg_mode = cfg_arg[1].to_string();
+            }
+            if cfg_arg[0].to_string().eq("stardate") {
+                cfg_stardate = cfg_arg[1].to_string().eq("enabled");
+            }
+            if cfg_arg[0].to_string().eq("template") {
+                cfg_template = cfg_arg[1].to_string();
             }
         }
     } else {
         eprintln!("Config not found.");
     }
+
+    for a in args {
+        if a.trim().eq("add".trim())
+            || a.trim().eq("today".trim())
+            || a.trim().eq("tomorrow".trim())
+            || a.trim().eq("yesterday".trim())
+        {
+            eprintln!("{} {}", a.trim(), FEATURE_NOT_IMPLEMENTED);
+        }
+        if !arg_add && !arg_yesterday && !arg_today && !arg_tomorrow && arg_journal.eq("") {
+            if 1 == 0 {
+                arg_journal = a.trim().to_string();
+            } else {
+                arg_journal = "default".to_string();
+            }
+        }
+        if !arg_add && !arg_yesterday && !arg_today && !arg_tomorrow {
+            arg_add = a.trim().eq("add".trim());
+        }
+        if !arg_yesterday && !arg_today && !arg_tomorrow {
+            arg_yesterday = a.trim().eq("yesterday".trim());
+            arg_today = a.trim().eq("today".trim());
+            arg_tomorrow = a.trim().eq("tomorrow".trim());
+        }
+        // take care of ommitable arguments
+        if !arg_yesterday && !arg_today && !arg_tomorrow && arg_add {
+            arg_today = true;
+        }
+
+        if a.trim().eq(&args[&args.len() - 1].to_string())
+            && a.trim().ne("add".trim())
+            && a.trim().ne("cfg".trim())
+            && a.trim().ne("today".trim())
+            && a.trim().ne("tomorrow".trim())
+            && a.trim().ne("yesterday".trim())
+            && a.trim().matches("\\").count() == 0
+            && a.trim().matches("/").count() == 0
+        // TODO: ignore journal names too
+        {
+            arg_journal_entry = a.trim();
+        }
+    }
+
+    if cfg_editor.eq("") {}
+    if cfg_editing_mark {}
+    if cfg_encryption {}
+    if cfg_journals.eq("") {}
+    let mut journal_file_name: &str = "";
+    if cfg_mode.eq("files") {
+        journal_file_name = "./files.md";
+    }
+    if cfg_mode.eq("folders") {
+        journal_file_name = "./folders.md";
+    }
+    if cfg_stardate {}
+    if cfg_template.eq("") {}
+
+    fs::write(journal_file_name, arg_journal_entry).expect("Could not write file.");
 }
 
 fn print_man() {

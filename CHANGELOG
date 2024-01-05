@@ -1,3 +1,11 @@
+v0.3.2
+-------------------------------------------------------------------------------
+-   Read the config file and store the values in variables.
+-   Read the cli arguments and store the values in variables.
+-   Write a test file with the journal entry.
+-   Configuration entry mode is somewhat drafted.
+-   Code refinements for error messages of v0.3.1.
+
 v0.3.1
 -------------------------------------------------------------------------------
 -   Adds error messages for missing features and configuration entries
