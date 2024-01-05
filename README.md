@@ -54,7 +54,7 @@ cfg path-to-config/my.cfg
 Lets you change the value-key pair in the config file. Will change the
 default config unless provided with cfg path-to-config/my.cfg.
 Changing the encryption in my.cfg located at ~/jrnl would look like
-this: jrnl set enrcyption=enabled cfg ~/jrnl/my.cfg.
+this: ```jrnl set enrcyption=enabled cfg ~/jrnl/my.cfg```.
 It's possible to change multiple config entries separating them with a
 comma ',' (e.g. encryption=enabled,mode=folders).
 
