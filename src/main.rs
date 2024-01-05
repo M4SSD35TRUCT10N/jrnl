@@ -4,11 +4,14 @@ use std::fs::File;
 use std::io::prelude::*;
 
 const CFG_FILE_NAME: &str = "jrnl.cfg";
+const FEATURE_NOT_IMPLEMENTED: &str = "This feature is not implemented yet.";
+const CONFIG_ENTRY_NOT_IMPLEMENTED: &str = "This configuration entry is not implemented yet.";
 
 fn create_jrnl_entry(args: &Vec<String>) {
     let mut cfg_file_name = format!("./{}", CFG_FILE_NAME);
     let mut own_cfg_file: bool = false;
 
+    // sort out what comes in from command line
     for a in args {
         if own_cfg_file {
             cfg_file_name = a.trim().to_string();
@@ -16,6 +19,13 @@ fn create_jrnl_entry(args: &Vec<String>) {
         }
         if a.trim().eq("cfg".trim()) {
             own_cfg_file = true;
+        }
+        if a.trim().eq("add".trim())
+            || a.trim().eq("today".trim())
+            || a.trim().eq("tomorrow".trim())
+            || a.trim().eq("yesterday".trim())
+        {
+            eprintln!("{} {}", a.trim(), FEATURE_NOT_IMPLEMENTED);
         }
     }
 
@@ -34,7 +44,17 @@ fn create_jrnl_entry(args: &Vec<String>) {
         }
 
         for co in &cfg_options_no_comments {
-            println!("{}", co);
+            let cfg_arg: Vec<&str> = co.split("=").collect();
+            if cfg_arg[0].to_string().eq("journals")
+                || cfg_arg[0].to_string().eq("mode")
+                || cfg_arg[0].to_string().eq("encryption")
+                || cfg_arg[0].to_string().eq("editor")
+                || cfg_arg[0].to_string().eq("template")
+                || cfg_arg[0].to_string().eq("stardate")
+                || cfg_arg[0].to_string().eq("editing_mark")
+            {
+                eprintln!("{} {}", cfg_arg[0], CONFIG_ENTRY_NOT_IMPLEMENTED);
+            }
         }
     } else {
         eprintln!("Config not found.");

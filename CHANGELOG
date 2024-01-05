@@ -1,3 +1,9 @@
+v0.3.1
+-------------------------------------------------------------------------------
+-   Adds error messages for missing features and configuration entries
+    which helps to keep track of features (currently all and everything).
+-   Update of the README.md to better reflect the project. 
+
 v0.3.0
 -------------------------------------------------------------------------------
 -   Finished config file loading bit in create_jrnl_entry(args: &Vec<String>).
