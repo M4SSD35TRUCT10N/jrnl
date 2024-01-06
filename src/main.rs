@@ -31,6 +31,8 @@ fn create_jrnl_entry(args: &Vec<String>) {
 
     let mut jrnl_time = Local::now();
 
+    // TODO:    Wrong stardate when using yesterday, tomorrow and when working
+    //          on specific journal entry (issue #14).
     let stardate_today = (((Utc::now().timestamp_millis() as f64
         - Utc
             .with_ymd_and_hms(1987, 7, 15, 0, 0, 0)
@@ -145,6 +147,7 @@ fn create_jrnl_entry(args: &Vec<String>) {
     if cfg_editing_mark {}
     if cfg_encryption {}
     if cfg_journals.eq("") {}
+    if cfg_template.ne("") {}
     if arg_tomorrow {
         jrnl_time = jrnl_time.checked_add_days(chrono::Days::new(1)).unwrap();
     }
@@ -194,11 +197,21 @@ fn create_jrnl_entry(args: &Vec<String>) {
         }
     );
 
-    fs::write(
-        &journal_file_name,
-        format!("{}\n{}", default_header, arg_journal_entry),
-    )
-    .expect("Could not write file.");
+    if arg_add {
+        let journal_file_content = fs::read_to_string(&journal_file_name)
+            .expect(format!("Couldn't open file {}.", &journal_file_name).as_str());
+        fs::write(
+            &journal_file_name,
+            format!("{}\n{}", &journal_file_content, arg_journal_entry),
+        )
+        .expect(format!("Could not write file {}.", &journal_file_name).as_str());
+    } else {
+        fs::write(
+            &journal_file_name,
+            format!("{}\n{}", default_header, arg_journal_entry),
+        )
+        .expect(format!("Could not write file {}.", &journal_file_name).as_str());
+    }
 
     if cfg_editor.ne("") && cfg_editor.ne("none") {
         let mut run_editor = Command::new(&cfg_editor);
