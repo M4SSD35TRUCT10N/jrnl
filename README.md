@@ -101,6 +101,13 @@ provided String will be added as a new line.
 For example ```~/jrnl/2021/05/05.md``` when you add something and today would
 be the 5th May of 2023.
 
+***@ (tags)***
+
+Using @ in a double quotation mark will overwrite the default tag in
+the default header and in the personalized template (if implemented).
+jrnl today "@Daily Report, Rust, NeoVIM, Lapce" "It's fun!" will
+add the tags Daily Report, Rust, NeoVIM and Lapce to your journal entry.
+
 ### Configuration
 The configuration file is a simple key-value store. You can comment with a
 '#' as first character per line. Currently there is not much to set.
