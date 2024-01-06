@@ -31,6 +31,16 @@ fn create_jrnl_entry(args: &Vec<String>) {
 
     let mut jrnl_time = Local::now();
 
+    let stardate_today = (((Utc::now().timestamp_millis() as f64
+        - Utc
+            .with_ymd_and_hms(1987, 7, 15, 0, 0, 0)
+            .unwrap()
+            .timestamp_millis() as f64)
+        / 3155760.0)
+        + 410000.0)
+        .floor()
+        / 10.0;
+
     for a in args {
         if arg_cfg {
             cfg_file_name = a.trim().to_string();
@@ -60,7 +70,6 @@ fn create_jrnl_entry(args: &Vec<String>) {
             if cfg_arg[0].to_string().eq("editing_mark")
                 || cfg_arg[0].to_string().eq("encryption")
                 || cfg_arg[0].to_string().eq("journals")
-                || cfg_arg[0].to_string().eq("stardate")
                 || cfg_arg[0].to_string().eq("template")
             {
                 eprintln!("{} {}", cfg_arg[0], CONFIG_ENTRY_NOT_IMPLEMENTED);
@@ -166,16 +175,23 @@ fn create_jrnl_entry(args: &Vec<String>) {
             journal_file_name
         );
     }
-    if cfg_stardate {}
-    if cfg_template.eq("") {}
 
     let default_header: String = format!(
-        "---\ntags: [{}]\ntitle: '{}'\ncreated: '{}'\nmodified: '{}'\n---\n\n# {}\n",
-        if arg_tags.ne("") {arg_tags.as_str()}else {"Daily Report"},
+        "---\ntags: [{}]\ntitle: '{}'\ncreated: '{}'\nmodified: '{}'\n---\n\n# {}{}\n",
+        if arg_tags.ne("") {
+            arg_tags.as_str()
+        } else {
+            "Daily Report"
+        },
         jrnl_time.date_naive(),
         jrnl_time,
         jrnl_time,
-        jrnl_time.date_naive()
+        jrnl_time.date_naive(),
+        if cfg_stardate {
+            format!(", Stardate: {}", stardate_today.to_string())
+        } else {
+            "".to_string()
+        }
     );
 
     fs::write(
@@ -184,7 +200,7 @@ fn create_jrnl_entry(args: &Vec<String>) {
     )
     .expect("Could not write file.");
 
-    if cfg_editor.ne("") {
+    if cfg_editor.ne("") && cfg_editor.ne("none") {
         let mut run_editor = Command::new(&cfg_editor);
         run_editor.arg(&journal_file_name);
         run_editor
