@@ -30,18 +30,7 @@ fn create_jrnl_entry(args: &Vec<String>) {
     let mut arg_yesterday: bool = false;
 
     let mut jrnl_time = Local::now();
-
-    // TODO:    Wrong stardate when using yesterday, tomorrow and when working
-    //          on specific journal entry (issue #14).
-    let stardate_today = (((Utc::now().timestamp_millis() as f64
-        - Utc
-            .with_ymd_and_hms(1987, 7, 15, 0, 0, 0)
-            .unwrap()
-            .timestamp_millis() as f64)
-        / 3155760.0)
-        + 410000.0)
-        .floor()
-        / 10.0;
+    let mut stardate_offset: f64 = 0.0;
 
     for a in args {
         if arg_cfg {
@@ -150,12 +139,14 @@ fn create_jrnl_entry(args: &Vec<String>) {
     if cfg_template.ne("") {}
     if arg_tomorrow {
         jrnl_time = jrnl_time.checked_add_days(chrono::Days::new(1)).unwrap();
+        stardate_offset = 86400000.0;
     }
-    let mut journal_file_name: String = ".md".to_string();
     if arg_yesterday {
         jrnl_time = jrnl_time.checked_sub_days(chrono::Days::new(1)).unwrap();
+        stardate_offset = -86400000.0;
     }
 
+    let mut journal_file_name: String = ".md".to_string();
     if cfg_mode.eq("files") {
         journal_file_name = format!(
             "{}{}",
@@ -179,6 +170,16 @@ fn create_jrnl_entry(args: &Vec<String>) {
         );
     }
 
+    let stardate_time = (((Utc::now().timestamp_millis() as f64 + stardate_offset
+        - Utc
+            .with_ymd_and_hms(1987, 7, 15, 0, 0, 0)
+            .unwrap()
+            .timestamp_millis() as f64)
+        / 3155760.0)
+        + 410000.0)
+        .floor()
+        / 10.0;
+
     let default_header: String = format!(
         "---\ntags: [{}]\ntitle: '{}'\ncreated: '{}'\nmodified: '{}'\n---\n\n# {}{}\n",
         if arg_tags.ne("") {
@@ -191,7 +192,7 @@ fn create_jrnl_entry(args: &Vec<String>) {
         jrnl_time,
         jrnl_time.date_naive(),
         if cfg_stardate {
-            format!(", Stardate: {}", stardate_today.to_string())
+            format!(", Stardate: {}", stardate_time.to_string())
         } else {
             "".to_string()
         }
