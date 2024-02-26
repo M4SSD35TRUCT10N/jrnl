@@ -1,6 +1,6 @@
 [package]
 name = "jrnl"
-version = "0.4.4"
+version = "0.4.5"
 authors = ["Enrico Lefass <enrico.lefass@mailbox.org>"]
 edition = "2018"
 

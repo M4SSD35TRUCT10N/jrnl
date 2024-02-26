@@ -1,3 +1,8 @@
+v0.4.5
+-------------------------------------------------------------------------------
+-   Config entry editing_mark works now.
+    Works together with stardate configuration entry.
+
 v0.4.4
 -------------------------------------------------------------------------------
 -   Fixed stardate for yesterday and tomorrow.

@@ -6,7 +6,7 @@ use std::io::prelude::*;
 use std::process::Command;
 
 const CFG_FILE_NAME: &str = "jrnl.cfg";
-const FEATURE_NOT_IMPLEMENTED: &str = "This feature is not implemented yet.";
+// const FEATURE_NOT_IMPLEMENTED: &str = "This feature is not implemented yet.";
 const CONFIG_ENTRY_NOT_IMPLEMENTED: &str = "This configuration entry is not implemented yet.";
 
 fn create_jrnl_entry(args: &Vec<String>) {
@@ -58,8 +58,7 @@ fn create_jrnl_entry(args: &Vec<String>) {
 
         for co in &cfg_options_no_comments {
             let cfg_arg: Vec<&str> = co.split("=").collect();
-            if cfg_arg[0].to_string().eq("editing_mark")
-                || cfg_arg[0].to_string().eq("encryption")
+            if cfg_arg[0].to_string().eq("encryption")
                 || cfg_arg[0].to_string().eq("journals")
                 || cfg_arg[0].to_string().eq("template")
             {
@@ -92,9 +91,6 @@ fn create_jrnl_entry(args: &Vec<String>) {
     }
 
     for a in args {
-        if a.trim().eq("add".trim()) {
-            eprintln!("{} {}", a.trim(), FEATURE_NOT_IMPLEMENTED);
-        }
         if !arg_add && !arg_yesterday && !arg_today && !arg_tomorrow && arg_journal.eq("") {
             if 1 == 0 {
                 arg_journal = a.trim().to_string();
@@ -102,7 +98,7 @@ fn create_jrnl_entry(args: &Vec<String>) {
                 arg_journal = "default".to_string();
             }
         }
-        if !arg_add && !arg_yesterday && !arg_today && !arg_tomorrow {
+        if !arg_add {
             arg_add = a.trim().eq("add".trim());
         }
         if !arg_yesterday && !arg_today && !arg_tomorrow {
@@ -113,9 +109,12 @@ fn create_jrnl_entry(args: &Vec<String>) {
         if arg_tags.eq("") && a.trim().starts_with("@") {
             arg_tags = a.trim().replace("@", "").to_string();
         }
+
         // take care of ommitable arguments
-        if !arg_yesterday && !arg_today && !arg_tomorrow && arg_add {
+        if !arg_yesterday && !arg_today && !arg_tomorrow && !arg_today {
             arg_today = true;
+        } else {
+            arg_today = false
         }
 
         if a.trim().eq(&args[&args.len() - 1].to_string())
@@ -133,7 +132,6 @@ fn create_jrnl_entry(args: &Vec<String>) {
         }
     }
 
-    if cfg_editing_mark {}
     if cfg_encryption {}
     if cfg_journals.eq("") {}
     if cfg_template.ne("") {}
@@ -170,7 +168,7 @@ fn create_jrnl_entry(args: &Vec<String>) {
         );
     }
 
-    let stardate_time = (((Utc::now().timestamp_millis() as f64 + stardate_offset
+    let stardate_time = (((Local::now().timestamp_millis() as f64 + stardate_offset
         - Utc
             .with_ymd_and_hms(1987, 7, 15, 0, 0, 0)
             .unwrap()
@@ -198,7 +196,38 @@ fn create_jrnl_entry(args: &Vec<String>) {
         }
     );
 
-    if arg_add {
+    if cfg_stardate && arg_add && cfg_editing_mark {
+        let journal_file_content = fs::read_to_string(&journal_file_name)
+            .expect(format!("Couldn't open file {}.", &journal_file_name).as_str());
+        fs::write(
+            &journal_file_name,
+            format!(
+                "{}\n({} Supplemental [Stardate: {}])\n{}",
+                &journal_file_content,
+                &jrnl_time.to_string(),
+                stardate_time.to_string(),
+                arg_journal_entry
+            ),
+        )
+        .expect(format!("Could not write file {}.", &journal_file_name).as_str());
+    }
+    if !cfg_stardate && arg_add && cfg_editing_mark {
+        let journal_file_content = fs::read_to_string(&journal_file_name)
+            .expect(format!("Couldn't open file {}.", &journal_file_name).as_str());
+        fs::write(
+            &journal_file_name,
+            format!(
+                "{}({})\n{}",
+                &journal_file_content,
+                &jrnl_time.to_string(),
+                arg_journal_entry
+            ),
+        )
+        .expect(format!("Could not write file {}.", &journal_file_name).as_str());
+    }
+    if (!cfg_stardate && arg_add && !cfg_editing_mark)
+        || (cfg_stardate && arg_add && !cfg_editing_mark)
+    {
         let journal_file_content = fs::read_to_string(&journal_file_name)
             .expect(format!("Couldn't open file {}.", &journal_file_name).as_str());
         fs::write(
@@ -206,7 +235,9 @@ fn create_jrnl_entry(args: &Vec<String>) {
             format!("{}\n{}", &journal_file_content, arg_journal_entry),
         )
         .expect(format!("Could not write file {}.", &journal_file_name).as_str());
-    } else {
+    }
+
+    if !arg_add {
         fs::write(
             &journal_file_name,
             format!("{}\n{}", default_header, arg_journal_entry),
