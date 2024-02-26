@@ -13,7 +13,7 @@ This is why the manual and the default config are hardcoded into the executable.
 
 > [!CAUTION]
 > This is alpha state software within its implementation phase.
-> Bugs are imminent and features will not work or create unreadable files.
+> Bugs are imminent and features will not work or could create unreadable files.
 > Sometimes things are simply not implemented. I strive to notify you about that
 > when you use that feature or configuration entry.
 
