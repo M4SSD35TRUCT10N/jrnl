@@ -110,13 +110,6 @@ fn create_jrnl_entry(args: &Vec<String>) {
             arg_tags = a.trim().replace("@", "").to_string();
         }
 
-        // take care of ommitable arguments
-        if !arg_yesterday && !arg_today && !arg_tomorrow && !arg_today {
-            arg_today = true;
-        } else {
-            arg_today = false
-        }
-
         if a.trim().eq(&args[&args.len() - 1].to_string())
             && a.trim().ne("add".trim())
             && a.trim().ne("cfg".trim())
@@ -132,9 +125,16 @@ fn create_jrnl_entry(args: &Vec<String>) {
         }
     }
 
+    // take care of ommitable arguments
+    if !arg_yesterday && !arg_today && !arg_tomorrow && !arg_today {
+        arg_today = true;
+    }
+
     if cfg_encryption {}
     if cfg_journals.eq("") {}
     if cfg_template.ne("") {}
+
+    if arg_today {}
     if arg_tomorrow {
         jrnl_time = jrnl_time.checked_add_days(chrono::Days::new(1)).unwrap();
         stardate_offset = 86400000.0;
