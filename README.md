@@ -16,6 +16,9 @@ This is why the manual and the default config are hardcoded into the executable.
 > Bugs are imminent and features will not work or could create unreadable files.
 > Sometimes things are simply not implemented. I strive to notify you about that
 > when you use that feature or configuration entry.
+> 
+> There's no executable download available as of yet.
+> You'll have to compile it yourself for the time being.
 
 ## Goals
 Be a viable open source rust written digital journal writing app. Using plain
@@ -25,6 +28,16 @@ text files.
 Replace all valuable zettelkasten or note taking apps.
 
 ## How to use it
+You'll need a working rust installation. Unzip the archive. Then cd into the
+directory (e.g. v0.4.5-alpha) and run the following command in your CLI:
+```
+cargo build --release
+```
+Copy the executable file from the release target folder to a folder of your
+choice. On POSIX-compliant operating systems, chmod +x jrnl is required in the
+release target folder or in the folder you've just copied the executable to.
+This is where your journal files and/or folder structures are created.
+
 Basically like this:
 ```
 jrnl today "It was a productive day without any interruptions."
