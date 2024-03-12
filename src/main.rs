@@ -58,10 +58,7 @@ fn create_jrnl_entry(args: &Vec<String>) {
 
         for co in &cfg_options_no_comments {
             let cfg_arg: Vec<&str> = co.split("=").collect();
-            if cfg_arg[0].to_string().eq("encryption")
-                || cfg_arg[0].to_string().eq("journals")
-                || cfg_arg[0].to_string().eq("template")
-            {
+            if cfg_arg[0].to_string().eq("encryption") || cfg_arg[0].to_string().eq("template") {
                 eprintln!("{} {}", cfg_arg[0], CONFIG_ENTRY_NOT_IMPLEMENTED);
             }
             if cfg_arg[0].to_string().eq("editor") {
@@ -91,11 +88,14 @@ fn create_jrnl_entry(args: &Vec<String>) {
     }
 
     for a in args {
-        if !arg_add && !arg_yesterday && !arg_today && !arg_tomorrow && arg_journal.eq("") {
-            if 1 == 0 {
-                arg_journal = a.trim().to_string();
-            } else {
-                arg_journal = "default".to_string();
+        if arg_journal.eq("") {
+            let journals_entries_tmp = cfg_journals.clone();
+            let journal_entries = journals_entries_tmp.split(",");
+            for entry in journal_entries {
+                let journal_path_parts: Vec<_> = entry.split("/").collect();
+                if journal_path_parts[journal_path_parts.len() - 1].eq(a.trim()) {
+                    arg_journal = entry.to_string();
+                }
             }
         }
         if !arg_add {
@@ -126,12 +126,11 @@ fn create_jrnl_entry(args: &Vec<String>) {
     }
 
     // take care of ommitable arguments
-    if !arg_yesterday && !arg_today && !arg_tomorrow && !arg_today {
+    if !arg_yesterday && !arg_today && !arg_tomorrow {
         arg_today = true;
     }
 
     if cfg_encryption {}
-    if cfg_journals.eq("") {}
     if cfg_template.ne("") {}
 
     if arg_today {}
@@ -144,23 +143,42 @@ fn create_jrnl_entry(args: &Vec<String>) {
         stardate_offset = -86400000.0;
     }
 
+    if arg_journal.eq("") {
+        arg_journal = "default".to_string();
+    }
+
     let mut journal_file_name: String = ".md".to_string();
     if cfg_mode.eq("files") {
         journal_file_name = format!(
-            "{}{}",
+            "{}{}{}",
+            if arg_journal.eq("default") {
+                "".to_string()
+            } else {
+                format!("{}/", arg_journal.as_str())
+            },
             jrnl_time.date_naive().to_string(),
             journal_file_name
         );
     }
     if cfg_mode.eq("folders") {
         fs::create_dir_all(format!(
-            "./{}/{}",
+            "{}/{}/{}",
+            if arg_journal.eq("default") {
+                ".".to_string()
+            } else {
+                format!("{}", arg_journal.as_str())
+            },
             jrnl_time.year().to_string(),
             jrnl_time.month().to_string()
         ))
         .expect("Couldn't create folders.");
         journal_file_name = format!(
-            "./{}/{}/{}{}",
+            "{}/{}/{}/{}{}",
+            if arg_journal.eq("default") {
+                ".".to_string()
+            } else {
+                format!("{}", arg_journal.as_str())
+            },
             jrnl_time.year().to_string(),
             jrnl_time.month().to_string(),
             jrnl_time.day().to_string(),
